@@ -525,7 +525,7 @@ public class GenericExporter {
             }
             propertyType = propertyType.as(TypeCategory.valueOf(queryType.value().name()));
         }
-        return new Property(entityType, propertyName, propertyType, inits);
+        return new Property(entityType, propertyName, propertyType, inits, annotated, false);
     }
 
     private void scanPackages(String... packages) {

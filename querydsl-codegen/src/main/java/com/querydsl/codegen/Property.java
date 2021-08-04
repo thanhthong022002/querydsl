@@ -14,6 +14,7 @@
 package com.querydsl.codegen;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 
 import javax.lang.model.SourceVersion;
@@ -41,6 +42,8 @@ public final class Property implements Comparable<Property> {
 
     private final Type type;
 
+    private final AnnotatedElement annotatedElement;
+
     public Property(EntityType declaringType, String name, Type type) {
         this(declaringType, name, type, Collections.<String>emptyList(), false);
     }
@@ -51,17 +54,28 @@ public final class Property implements Comparable<Property> {
 
     public Property(EntityType declaringType, String name, Type type, List<String> inits,
             boolean inherited) {
-        this(declaringType, name, escapeName(name), type, inits, inherited);
+        this(declaringType, name, escapeName(name), type, inits, null, inherited);
+    }
+
+    public Property(EntityType declaringType, String name, Type type, List<String> inits,
+                    AnnotatedElement annotatedElement, boolean inherited) {
+        this(declaringType, name, escapeName(name), type, inits, annotatedElement, inherited);
     }
 
     public Property(EntityType declaringType, String name, String escapedName, Type type,
-            List<String> inits, boolean inherited) {
+                    List<String> inits, boolean inherited) {
+        this(declaringType, name, escapedName, type, inits, null, inherited);
+    }
+
+    public Property(EntityType declaringType, String name, String escapedName, Type type,
+            List<String> inits, AnnotatedElement annotatedElement, boolean inherited) {
         this.declaringType = declaringType;
         this.name = name;
         this.escapedName = escapedName;
         this.type = type;
         this.inits = inits;
         this.inherited = inherited;
+        this.annotatedElement = annotatedElement;
     }
 
     private static String escapeName(String name) {
@@ -152,6 +166,10 @@ public final class Property implements Comparable<Property> {
 
     public Type getType() {
         return type;
+    }
+
+    public AnnotatedElement getAnnotatedElement() {
+        return annotatedElement;
     }
 
     public boolean isInherited() {
