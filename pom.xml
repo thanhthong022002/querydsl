@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.querydsl</groupId>
   <artifactId>querydsl-root</artifactId>
-  <version>10.0.1</version>
+  <version>10.0.2</version>
     <name>Querydsl</name>
   <description>parent project for Querydsl modules</description>
   <url>https://querydsl.github.io/</url>
@@ -744,19 +744,6 @@
         <!-- Languages -->
         <module>querydsl-scala</module>
         <module>querydsl-kotlin</module>
-      </modules>
-    </profile>
-
-    <profile>
-      <id>xomad</id>
-      <modules>
-        <module>querydsl-core</module>
-        <module>querydsl-codegen</module>
-        <module>querydsl-codegen-utils</module>
-        <module>querydsl-maven-plugin</module>
-        <module>querydsl-jpa</module>
-        <module>querydsl-jpa-codegen</module>
-        <module>querydsl-bom</module>
       </modules>
     </profile>
 
