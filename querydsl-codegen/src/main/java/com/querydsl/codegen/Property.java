@@ -105,12 +105,12 @@ public final class Property implements Comparable<Property> {
         if (!declaringType.getParameters().isEmpty()) {
             Type newType = TypeResolver.resolve(type, declaringType, targetModel);
             if (!newType.equals(type) || !newType.getClass().equals(type.getClass())) {
-                return new Property(targetModel, name, newType, inits, false);
+                return new Property(targetModel, name, newType, inits, annotatedElement, false);
             } else {
-                return new Property(targetModel, name, type, inits, targetModel.getSuperType() != null);
+                return new Property(targetModel, name, type, inits, annotatedElement, targetModel.getSuperType() != null);
             }
         } else {
-            return new Property(targetModel, name, type, inits, targetModel.getSuperType() != null);
+            return new Property(targetModel, name, type, inits,  annotatedElement, targetModel.getSuperType() != null);
         }
     }
 

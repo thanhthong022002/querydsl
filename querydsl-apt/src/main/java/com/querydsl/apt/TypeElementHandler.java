@@ -169,7 +169,7 @@ public class TypeElementHandler {
             inits = Arrays.asList(annotations.getAnnotation(QueryInit.class).value());
         }
 
-        return new Property(entityType, name, propertyType, inits);
+        return new Property(entityType, name, propertyType, inits, annotations, false);
     }
 
 
