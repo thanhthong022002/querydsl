@@ -19,6 +19,17 @@
 
   <inceptionYear>2007</inceptionYear>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>maven-snapshots</id>
+      <url>http://nexus.internal.xomad.com/repository/maven-snapshots/</url>
+    </snapshotRepository>
+    <repository>
+      <id>maven-releases</id>
+      <url>http://nexus.internal.xomad.com/repository/maven-releases/</url>
+    </repository>
+  </distributionManagement>
+
   <properties>
     <failIfNoTests>false</failIfNoTests>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -681,6 +692,7 @@
         </dependencies>
         <configuration>
           <excludes>**/generated/**/*,**/jmh_generated/**/*,**/com/querydsl/codegen/utils/**/*</excludes>
+          <skip>${checkstyle.skip}</skip>
         </configuration>
       </plugin>
     </plugins>
