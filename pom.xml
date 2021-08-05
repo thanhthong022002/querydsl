@@ -748,6 +748,19 @@
     </profile>
 
     <profile>
+      <id>xomad</id>
+      <modules>
+        <module>querydsl-core</module>
+        <module>querydsl-codegen</module>
+        <module>querydsl-codegen-utils</module>
+        <module>querydsl-maven-plugin</module>
+        <module>querydsl-jpa</module>
+        <module>querydsl-jpa-codegen</module>
+        <module>querydsl-bom</module>
+      </modules>
+    </profile>
+
+    <profile>
       <id>hibernate-search</id>
       <modules>
         <module>querydsl-core</module>
