@@ -636,7 +636,7 @@
           </dependency>
         </dependencies>
       </plugin>
-      <plugin>
+      <!--<plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
         <version>${animal-sniffer.version}</version>
@@ -656,7 +656,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin>-->
       <!--<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>

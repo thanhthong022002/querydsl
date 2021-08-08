@@ -129,6 +129,19 @@
       <artifactId>ecj</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.pallasathenagroup.querydsl</groupId>
+      <artifactId>querydsl-ext-api</artifactId>
+      <version>10.0.0-SNAPSHOT</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.querydsl</groupId>
+          <artifactId>querydsl-jpa</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
             
   </dependencies>
 
