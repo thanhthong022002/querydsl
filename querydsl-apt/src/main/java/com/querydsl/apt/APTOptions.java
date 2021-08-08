@@ -103,7 +103,7 @@ public final class APTOptions {
 
     /**
      * the class instance of the <em>Single-Element Annotation</em> (with {@code String} element) to be used on the generated classes.
-     * (default: depending on java version: javax.annotation.Generated or javax.annotation.processing.Generated)
+     * (default: depending on java version: javax.annotation.processing.Generated or javax.annotation.processing.Generated)
      *  @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-9.html#jls-9.7.3">Single-Element Annotation</a>
      */
     public static final String QUERYDSL_GENERATED_ANNOTATION_CLASS = "querydsl.generatedAnnotationClass";

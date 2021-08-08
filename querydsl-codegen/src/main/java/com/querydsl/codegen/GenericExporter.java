@@ -819,7 +819,7 @@ public class GenericExporter {
      * Set the Generated annotation class. Will default to java {@code @Generated}
      *
      * @param generatedAnnotationClass the fully qualified class name of the <em>Single-Element Annotation</em> (with {@code String} element) to be used on
-     *                                 the generated sources, or {@code null} (defaulting to {@code javax.annotation.Generated} or
+     *                                 the generated sources, or {@code null} (defaulting to {@code javax.annotation.processing.Generated} or
      *                                {@code javax.annotation.processing.Generated} depending on the java version).
      * @see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-9.html#jls-9.7.3">Single-Element Annotation</a>
      */

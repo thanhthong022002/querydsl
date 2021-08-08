@@ -31,6 +31,8 @@
   </distributionManagement>
 
   <properties>
+    <maven.compiler.source>14</maven.compiler.source>
+    <maven.compiler.target>14</maven.compiler.target>
     <failIfNoTests>false</failIfNoTests>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.homepage>http://www.querydsl.com</project.homepage>
@@ -325,6 +327,7 @@
           <version>3.3.0</version>
         </plugin>
         <plugin>
+          <inherited>true</inherited>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.1</version>
@@ -392,7 +395,7 @@
     </pluginManagement>
 
     <plugins>
-      <plugin>
+      <!--<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>1.4.1</version>
@@ -419,11 +422,11 @@
               <rules>
                 <bannedDependencies>
                   <excludes>
-                    <!-- Jetbrains Annotations should be in provided scope -->
+                    &lt;!&ndash; Jetbrains Annotations should be in provided scope &ndash;&gt;
                     <exclude>org.jetbrains:annotations:*:*:compile</exclude>
-                    <!-- JSR-305 annotations should not be used, instead use Jetbrains Annotations -->
+                    &lt;!&ndash; JSR-305 annotations should not be used, instead use Jetbrains Annotations &ndash;&gt;
                     <exclude>com.google.code.findbugs:jsr305:*:*:compile</exclude>
-                    <!-- The following API's should be optionally provided and declare provided scope -->
+                    &lt;!&ndash; The following API's should be optionally provided and declare provided scope &ndash;&gt;
                     <exclude>org.hibernate:hibernate-core:*:*:compile</exclude>
                     <exclude>org.hibernate:hibernate-envers:*:*:compile</exclude>
                     <exclude>org.hibernate.validator:hibernate-validator:*:*:compile</exclude>
@@ -437,7 +440,7 @@
                     <exclude>javax.el:javax.el-api:*:*:compile</exclude>
                     <exclude>jakarta.persistence:jakarta.persistence-api:*:*:compile</exclude>
                     <exclude>org.batoo.jpa:batoo-jpa:*:*:compile</exclude>
-                    <!-- The following database drivers should be in test scope -->
+                    &lt;!&ndash; The following database drivers should be in test scope &ndash;&gt;
                     <exclude>org.hsqldb:hsqldb:*:*:compile</exclude>
                     <exclude>com.h2database:h2:*:*:compile</exclude>
                     <exclude>org.apche.derby:derby:*:*:compile</exclude>
@@ -448,9 +451,9 @@
                     <exclude>cubrid:cubrid-jdbc:*:*:compile</exclude>
                     <exclude>org.firebirdsql.jdbc:jaybird-jdk16:*:*:compile</exclude>
                     <exclude>org.xerial:sqlite-jdbc:*:*:compile</exclude>
-                    <!-- hibernate-entitymanager is a legacy artefact and should not be used anymore -->
+                    &lt;!&ndash; hibernate-entitymanager is a legacy artefact and should not be used anymore &ndash;&gt;
                     <exclude>org.hibernate:hibernate-entitymanager</exclude>
-                    <!-- We favor JUL over Slf4j -->
+                    &lt;!&ndash; We favor JUL over Slf4j &ndash;&gt;
                     <exclude>org.slf4j:slf4j-api:*:*:compile</exclude>
                     <exclude>org.slf4j:slf4j-log4j12:*:*:compile</exclude>
                   </excludes>
@@ -460,7 +463,7 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
+      </plugin>-->
       <!-- TODO make this work or find replacement
       <plugin>
         <groupId>com.github.siom79.japicmp</groupId>
@@ -596,8 +599,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
         </configuration>
       </plugin>
       <plugin>
@@ -654,7 +657,7 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
+      <!--<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>3.1.2</version>
@@ -694,7 +697,7 @@
           <excludes>**/generated/**/*,**/jmh_generated/**/*,**/com/querydsl/codegen/utils/**/*</excludes>
           <skip>${checkstyle.skip}</skip>
         </configuration>
-      </plugin>
+      </plugin>-->
     </plugins>
   </build>
 
@@ -914,40 +917,6 @@
       </properties>
     </profile>
 
-    <profile>
-      <id>java-11</id>
-      <activation>
-        <jdk>[11,)</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-              <source>1.8</source>
-              <target>11</target>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.eluder.coveralls</groupId>
-            <artifactId>coveralls-maven-plugin</artifactId>
-            <dependencies>
-              <dependency>
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>2.3.2</version>
-              </dependency>
-              <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-runtime</artifactId>
-                <version>2.3.2</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 
   <reporting>

@@ -2,7 +2,7 @@ package com.querydsl.codegen;
 
 import org.junit.Test;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import java.lang.annotation.Annotation;
 
 import static org.junit.Assert.assertNotNull;

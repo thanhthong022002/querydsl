@@ -114,7 +114,7 @@ public abstract class AbstractExporterMojo extends AbstractMojo {
 
     /**
      * The fully qualified class name of the <em>Single-Element Annotation</em> (with <code>String</code> element) to put on the generated sources. Defaults to
-     * <code>javax.annotation.Generated</code> or <code>javax.annotation.processing.Generated</code> depending on the java version.
+     * <code>javax.annotation.processing.Generated</code> or <code>javax.annotation.processing.Generated</code> depending on the java version.
      * <em>See also</em> <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-9.html#jls-9.7.3">Single-Element Annotation</a>
      *
      * @parameter

@@ -144,8 +144,7 @@ public final class TypeFactory {
 
         if (annotationHelper != null) {
             value = createOther(cl, entity, annotationHelper, annotation, parameters);
-        }
-        else if (cl.isArray()) {
+        } else if (cl.isArray()) {
             Type componentType = get(cl.getComponentType());
             if (cl.getComponentType().isPrimitive()) {
                 componentType = Types.PRIMITIVES.get(componentType);
