@@ -657,4 +657,16 @@ public class ExtendedTypeFactory {
             }
         }
     }
+
+    public SimpleType createNameClassType(EntityType model) {
+        String simpleName = model.getSimpleName().replaceAll("\\.", "_");
+        String nameClass = "N" + simpleName;
+        String fullName = model.getPackageName() + "." + nameClass;
+
+        return new SimpleType(
+                fullName,
+                model.getPackageName(),
+                nameClass
+        );
+    }
 }

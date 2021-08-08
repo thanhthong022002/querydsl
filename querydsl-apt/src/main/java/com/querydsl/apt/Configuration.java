@@ -15,8 +15,8 @@ package com.querydsl.apt;
 
 import com.querydsl.codegen.*;
 import com.querydsl.core.util.Annotations;
-
 import org.jetbrains.annotations.Nullable;
+
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
@@ -62,6 +62,8 @@ public interface Configuration {
     Set<Class<? extends Annotation>> getEntityAnnotations();
 
     Serializer getEntitySerializer();
+
+    default NameClassSerializer getNameClassSerializer() { return null; };
 
     String getNamePrefix();
 

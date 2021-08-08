@@ -13,14 +13,11 @@
  */
 package com.querydsl.apt;
 
-import com.querydsl.codegen.utils.model.Constructor;
-import com.querydsl.codegen.utils.model.Parameter;
-import com.querydsl.codegen.utils.model.Type;
-import com.querydsl.codegen.utils.model.TypeCategory;
 import com.querydsl.codegen.EntityType;
 import com.querydsl.codegen.Property;
 import com.querydsl.codegen.QueryTypeFactory;
 import com.querydsl.codegen.TypeMappings;
+import com.querydsl.codegen.utils.model.*;
 import com.querydsl.core.annotations.PropertyType;
 import com.querydsl.core.annotations.QueryInit;
 import com.querydsl.core.annotations.QueryType;
@@ -33,14 +30,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * {@code TypeElementHandler} is an APT visitor for entity types
@@ -179,6 +169,15 @@ public class TypeElementHandler {
         typeMappings.register(entityType, queryTypeFactory.create(entityType));
         List<? extends Element> elements = e.getEnclosedElements();
         handleConstructors(entityType, elements);
+        return entityType;
+    }
+
+    public EntityType handleNameClassElement(TypeElement typeElement) {
+        EntityType entityType = typeFactory.getEntityType(typeElement.asType(), true);
+        if (!typeMappings.isRegistered(entityType)) {
+            SimpleType nameClassType = typeFactory.createNameClassType(entityType);
+            typeMappings.register(entityType, nameClassType);
+        }
         return entityType;
     }
 
