@@ -17,7 +17,10 @@ import com.querydsl.codegen.EntityType;
 import com.querydsl.codegen.Property;
 import com.querydsl.codegen.QueryTypeFactory;
 import com.querydsl.codegen.TypeMappings;
-import com.querydsl.codegen.utils.model.*;
+import com.querydsl.codegen.utils.model.Constructor;
+import com.querydsl.codegen.utils.model.Parameter;
+import com.querydsl.codegen.utils.model.Type;
+import com.querydsl.codegen.utils.model.TypeCategory;
 import com.querydsl.core.annotations.PropertyType;
 import com.querydsl.core.annotations.QueryInit;
 import com.querydsl.core.annotations.QueryType;
@@ -173,11 +176,7 @@ public class TypeElementHandler {
     }
 
     public EntityType handleNameClassElement(TypeElement typeElement) {
-        EntityType entityType = typeFactory.getEntityType(typeElement.asType(), true);
-        if (!typeMappings.isRegistered(entityType)) {
-            SimpleType nameClassType = typeFactory.createNameClassType(entityType);
-            typeMappings.register(entityType, nameClassType);
-        }
+        EntityType entityType = typeFactory.getNameClassEntityType(typeElement.asType(), true);
         return entityType;
     }
 

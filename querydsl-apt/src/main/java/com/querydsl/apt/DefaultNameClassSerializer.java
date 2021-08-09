@@ -130,7 +130,7 @@ public class DefaultNameClassSerializer implements NameClassSerializer {
     protected void constructorsForVariables(CodeWriter writer, EntityType model) throws IOException {
         writer.beginConstructor(
             new Parameter("name", Types.STRING),
-            new Parameter("parent", getNamePathType(model))
+            new Parameter("parent", getNamePathType(null))
         );
         writer.line(SUPER,"(name, parent);");
         writer.end();

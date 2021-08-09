@@ -23,8 +23,8 @@ public class GenericTest extends AbstractProcessorTest {
 
     @Test
     public void test3() throws IOException {
-        List<String> classes = Collections.singletonList(
-//                "src/test/java/com/querydsl/apt/domain/type/BrandContact.java"
+        List<String> classes = List.of(
+                "src/test/java/com/querydsl/apt/domain/type/BrandContact.java",
                 "src/test/java/com/querydsl/apt/domain/type/Action.java"
         );
         process(ExtendedJPAAnnotationProcessor.class, classes,"GenericTest3");
