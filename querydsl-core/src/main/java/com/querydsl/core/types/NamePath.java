@@ -19,7 +19,8 @@ public class NamePath<T> {
     }
 
     public String path() {
-        return parent == null ? name : parent.path() + "." + name;
+        String parentPath = parent != null ? parent.path() : null;
+        return parentPath == null ? name : parentPath + "." + name;
     }
 
     public String buildPath(String leaf) {
