@@ -15,6 +15,7 @@ package com.querydsl.apt;
 
 import com.querydsl.codegen.*;
 import com.querydsl.codegen.utils.CodeWriter;
+import com.querydsl.codegen.utils.model.Parameter;
 import com.querydsl.codegen.utils.model.SimpleType;
 import com.querydsl.codegen.utils.model.Type;
 import com.querydsl.codegen.utils.model.Types;
@@ -24,6 +25,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 
 import static com.querydsl.codegen.utils.Symbols.NEW;
+import static com.querydsl.codegen.utils.Symbols.SUPER;
 
 
 public class DefaultNameClassSerializer implements NameClassSerializer {
@@ -41,6 +43,9 @@ public class DefaultNameClassSerializer implements NameClassSerializer {
 
         // properties
         serializeProperties(model, config, writer);
+
+        // constructors
+        constructors(model, config, writer);
 
         outro(model, writer);
     }
@@ -113,6 +118,22 @@ public class DefaultNameClassSerializer implements NameClassSerializer {
         String simpleName = !defaultName.isEmpty() ? defaultName : model.getModifiedSimpleName();
         Type queryType = getNameClassType(model);
         writer.publicStaticFinal(queryType, simpleName, NEW + queryType.getSimpleName() + "(null, null)");
+    }
+
+    protected void constructors(EntityType model, SerializerConfig config,
+                                CodeWriter writer) throws IOException {
+
+        // String
+        constructorsForVariables(writer, model);
+    }
+
+    protected void constructorsForVariables(CodeWriter writer, EntityType model) throws IOException {
+        writer.beginConstructor(
+            new Parameter("name", Types.STRING),
+            new Parameter("parent", getNamePathType(model))
+        );
+        writer.line(SUPER,"(name, parent);");
+        writer.end();
     }
 
     protected void serializeProperties(EntityType model,  SerializerConfig config,
