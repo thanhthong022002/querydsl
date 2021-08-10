@@ -543,6 +543,7 @@ public abstract class AbstractQuerydslProcessor extends AbstractProcessor {
         Map<String, Map<String, VariableElement>> nameClassesFields = new HashMap<>();
 
         for (Element element : getElements(NameClass.class)) {
+            System.out.println("Found NameClass element: " + element.getSimpleName().toString());
             if (element instanceof TypeElement) {
 
                 TypeElement typeElement = (TypeElement) element;
