@@ -38,7 +38,7 @@ public final class JPAProvider {
 
     private static final Map<String, JPQLTemplates> templatesByName = new HashMap<>();
 
-    private static void addMapping(String className, JPQLTemplates templates) {
+    public static void addMapping(String className, JPQLTemplates templates) {
         try {
             mappings.put(Class.forName(className), templates);
         } catch (Exception e) { }
