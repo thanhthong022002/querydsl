@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.querydsl</groupId>
     <artifactId>querydsl-root</artifactId>
-    <version>5.0.0</version>
+    <version>10.0.2</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -78,6 +78,11 @@
       <version>${morphia.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>2.11.0</version>
+    </dependency>
     
     <!-- test -->
     <dependency>
@@ -123,6 +128,19 @@
       <groupId>org.eclipse.jdt.core.compiler</groupId>
       <artifactId>ecj</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.pallasathenagroup.querydsl</groupId>
+      <artifactId>querydsl-ext-api</artifactId>
+      <version>10.0.3</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.querydsl</groupId>
+          <artifactId>querydsl-jpa</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
             
   </dependencies>
@@ -230,7 +248,7 @@
                 <processor>com.querydsl.apt.hibernate.HibernateAnnotationProcessor</processor>
                 <processor>com.querydsl.apt.jdo.JDOAnnotationProcessor</processor>
                 <processor>com.querydsl.apt.roo.RooAnnotationProcessor</processor>
-              </processors>              
+              </processors>
             </configuration>
           </execution>                            
         </executions>

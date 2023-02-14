@@ -1,12 +1,11 @@
 package com.querydsl.apt;
 
+import com.querydsl.apt.jpa.JPAAnnotationProcessor;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-
-import org.junit.Test;
-
-import com.querydsl.apt.jpa.JPAAnnotationProcessor;
 
 public class GenericTest extends AbstractProcessorTest {
 
@@ -20,6 +19,15 @@ public class GenericTest extends AbstractProcessorTest {
     public void test2() throws IOException {
         List<String> classes = Collections.singletonList("src/test/java/com/querydsl/apt/domain/Generic9Test.java");
         process(JPAAnnotationProcessor.class, classes,"GenericTest2");
+    }
+
+    @Test
+    public void test3() throws IOException {
+        List<String> classes = List.of(
+                "src/test/java/com/querydsl/apt/domain/type/BrandContact.java",
+                "src/test/java/com/querydsl/apt/domain/type/Action.java"
+        );
+        process(ExtendedJPAAnnotationProcessor.class, classes,"GenericTest3");
     }
 
 }

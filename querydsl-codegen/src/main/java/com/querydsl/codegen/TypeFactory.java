@@ -142,7 +142,9 @@ public final class TypeFactory {
         cache.put(key, new ClassType(cl, tempParams));
         Type[] parameters = getParameters(cl, genericType);
 
-        if (cl.isArray()) {
+        if (annotationHelper != null) {
+            value = createOther(cl, entity, annotationHelper, annotation, parameters);
+        } else if (cl.isArray()) {
             Type componentType = get(cl.getComponentType());
             if (cl.getComponentType().isPrimitive()) {
                 componentType = Types.PRIMITIVES.get(componentType);

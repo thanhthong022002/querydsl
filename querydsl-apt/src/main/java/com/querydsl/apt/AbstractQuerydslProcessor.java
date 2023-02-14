@@ -13,13 +13,16 @@
  */
 package com.querydsl.apt;
 
-import static com.querydsl.apt.APTOptions.*;
-
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.annotation.Annotation;
-import java.util.*;
-import java.util.stream.Stream;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.querydsl.codegen.*;
+import com.querydsl.codegen.utils.JavaWriter;
+import com.querydsl.codegen.utils.model.Parameter;
+import com.querydsl.codegen.utils.model.Type;
+import com.querydsl.codegen.utils.model.TypeCategory;
+import com.querydsl.core.annotations.NameClass;
+import com.querydsl.core.annotations.QueryDelegate;
+import com.querydsl.core.annotations.QueryExclude;
+import com.querydsl.core.annotations.QueryProjection;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -30,15 +33,13 @@ import javax.lang.model.type.NoType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic.Kind;
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.annotation.Annotation;
+import java.util.*;
+import java.util.stream.Stream;
 
-import com.querydsl.codegen.utils.JavaWriter;
-import com.querydsl.codegen.utils.model.Parameter;
-import com.querydsl.codegen.utils.model.Type;
-import com.querydsl.codegen.utils.model.TypeCategory;
-import com.querydsl.codegen.*;
-import com.querydsl.core.annotations.QueryDelegate;
-import com.querydsl.core.annotations.QueryExclude;
-import com.querydsl.core.annotations.QueryProjection;
+import static com.querydsl.apt.APTOptions.*;
 
 /**
  * {@code AbstractQuerydslProcessor} is the base class for Querydsl annotation processors and
@@ -95,6 +96,9 @@ public abstract class AbstractQuerydslProcessor extends AbstractProcessor {
 
         // serialize created types
         serializeMetaTypes();
+
+        processNameClassAnnotations();
+        serializeNameClasses();
 
         return ALLOW_OTHER_PROCESSORS_TO_CLAIM_ANNOTATIONS;
     }
@@ -505,6 +509,7 @@ public abstract class AbstractQuerydslProcessor extends AbstractProcessor {
             }
         }
     }
+
     private void serializeMetaTypes() {
         if (!context.supertypes.isEmpty()) {
             logInfo("Serializing Supertypes");
@@ -531,6 +536,130 @@ public abstract class AbstractQuerydslProcessor extends AbstractProcessor {
             serialize(conf.getDTOSerializer(), context.projectionTypes.values());
         }
 
+    }
+
+    protected void processNameClassAnnotations() {
+        Map<String, TypeElement> nameClasses = new HashMap<>();
+        Map<String, Map<String, VariableElement>> nameClassesFields = new HashMap<>();
+
+        for (Element element : getElements(NameClass.class)) {
+            System.out.println("Found NameClass element: " + element.getSimpleName().toString());
+            if (element instanceof TypeElement) {
+
+                TypeElement typeElement = (TypeElement) element;
+
+                nameClasses.put(typeElement.getQualifiedName().toString(), typeElement);
+                nameClassesFields.put(typeElement.getQualifiedName().toString(), new LinkedHashMap<>());
+
+                List<? extends Element> enclosedElements = typeElement.getEnclosedElements();
+                List<VariableElement> fields = ElementFilter.fieldsIn(enclosedElements);
+
+                for (VariableElement field : fields) {
+                    String name = field.getSimpleName().toString();
+
+                    if (!conf.isBlockedField(field)) {
+                        nameClassesFields.get(typeElement.getQualifiedName().toString())
+                                .put(name, field);
+                    }
+                }
+            }
+        }
+
+        for (Map.Entry<String, TypeElement> type : nameClasses.entrySet()) {
+            TypeElement typeElement = type.getValue();
+
+            EntityType model = elementHandler.handleNameClassElement(typeElement);
+            for (Map.Entry<String, VariableElement> field : nameClassesFields.get(type.getKey()).entrySet()) {
+                List<String> inits = new ArrayList<>();
+
+                // detect custom json field
+                String customName = field.getKey();
+                JsonProperty jsonProperty = field.getValue().getAnnotation(JsonProperty.class);
+                if (jsonProperty != null) {
+                    customName = jsonProperty.value();
+                }
+                inits.add(customName);
+
+                // detect field type
+                String fieldTypeName = field.getValue().asType().toString();
+                if (nameClasses.containsKey(fieldTypeName)) {
+                    EntityType fieldType = elementHandler.handleNameClassElement(nameClasses.get(fieldTypeName));
+                    Property property = new Property(model, field.getKey(), fieldType, inits);
+                    model.getProperties().add(property);
+                }
+                else {
+                    Property property = new Property(model, field.getKey(), null, inits);
+                    model.getProperties().add(property);
+                }
+            }
+
+            context.nameClasses.put(
+                    model.getFullName(),
+                    model
+            );
+
+            context.typeElements.put(
+                    model.getFullName(),
+                    Set.of(typeElement)
+            );
+        }
+
+        // copy properties of superclasses to children
+        for (Map.Entry<String, EntityType> nameClass : context.nameClasses.entrySet()) {
+            EntityType model = nameClass.getValue();
+            if (model.getSuperTypes() != null) {
+                for (Supertype superType : model.getSuperTypes()) {
+                    String superTypeName = superType.getType().getFullName();
+                    if (context.nameClasses.containsKey(superTypeName)) {
+                        // copy fields of super to this
+                        EntityType superModel = context.nameClasses.get(superTypeName);
+                        if (superModel != null) {
+                            for (Property superProperty : superModel.getProperties()) {
+                                // not override property with the same name
+                                if (model.getProperties().stream()
+                                        .noneMatch(property -> property.getName().equals(superProperty.getName()))) {
+                                    model.getProperties().add(
+                                            superProperty.createCopy(model)
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void serializeNameClasses() {
+        if (!context.nameClasses.isEmpty()) {
+            logInfo("Serializing name classes");
+
+            TypeMappings typeMappings = conf.getTypeMappings();
+            DefaultNameClassSerializer serializer = (DefaultNameClassSerializer) conf.getNameClassSerializer();
+            if (serializer != null) {
+
+                for (Map.Entry<String, EntityType> entry : context.nameClasses.entrySet()) {
+
+                    logInfo("Generating name classes for " + entry.getKey());
+                    Set<TypeElement> typeElements = context.typeElements.get(entry.getKey());
+                    if (typeElements == null) {
+                        typeElements = new HashSet<>();
+                    }
+
+                    Type nameClassType = typeMappings.getPathType(entry.getValue(), null, true);
+
+                    try (Writer writer = conf.getFiler().createFile(processingEnv,
+                            nameClassType.getFullName(), typeElements)) {
+                        SerializerConfig serializerConfig = conf.getSerializerConfig(entry.getValue());
+                        serializer.serialize(entry.getValue(), serializerConfig, new JavaWriter(writer));
+
+                    } catch (IOException e) {
+                        System.err.println(e.getMessage());
+                        processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
+                    }
+                }
+            }
+        }
     }
 
     private Set<? extends Element> getElements(Class<? extends Annotation> a) {

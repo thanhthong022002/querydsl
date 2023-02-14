@@ -13,46 +13,18 @@
  */
 package com.querydsl.apt;
 
-import com.querydsl.codegen.utils.model.SimpleType;
-import com.querydsl.codegen.utils.model.Type;
-import com.querydsl.codegen.utils.model.TypeCategory;
-import com.querydsl.codegen.utils.model.TypeExtends;
-import com.querydsl.codegen.utils.model.TypeSuper;
-import com.querydsl.codegen.utils.model.Types;
-import com.querydsl.codegen.EntityType;
-import com.querydsl.codegen.Property;
-import com.querydsl.codegen.QueryTypeFactory;
-import com.querydsl.codegen.Supertype;
-import com.querydsl.codegen.TypeMappings;
+import com.querydsl.codegen.*;
+import com.querydsl.codegen.utils.model.*;
 import com.querydsl.core.annotations.QueryExclude;
-
 import org.jetbrains.annotations.Nullable;
+
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.ArrayType;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.ErrorType;
-import javax.lang.model.type.ExecutableType;
-import javax.lang.model.type.NoType;
-import javax.lang.model.type.NullType;
-import javax.lang.model.type.PrimitiveType;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVariable;
-import javax.lang.model.type.TypeVisitor;
-import javax.lang.model.type.WildcardType;
+import javax.lang.model.type.*;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -505,6 +477,26 @@ public class ExtendedTypeFactory {
     }
 
     @Nullable
+    public EntityType getNameClassEntityType(TypeMirror typeMirror, boolean deep) {
+        List<String> key = keyBuilder.visit(typeMirror, true);
+        // get from cache
+        if (entityTypeCache.containsKey(key)) {
+            EntityType entityType = entityTypeCache.get(key);
+            if (deep && entityType.getSuperTypes().isEmpty()) {
+                for (Type superType : getSupertypes(typeMirror, deep)) {
+                    entityType.addSupertype(new Supertype(superType));
+                }
+            }
+            return entityType;
+
+            // create
+        } else {
+            return createNameClassEntityType(typeMirror, key, deep);
+
+        }
+    }
+
+    @Nullable
     private EntityType createEntityType(TypeMirror typeMirror, List<String> key, boolean deep) {
         entityTypeCache.put(key, null);
         Type value = visitor.visit(typeMirror, deep);
@@ -515,6 +507,32 @@ public class ExtendedTypeFactory {
             } else {
                 entityType = new EntityType(value, variableNameFunction);
                 typeMappings.register(entityType, queryTypeFactory.create(entityType));
+            }
+            entityTypeCache.put(key, entityType);
+
+            if (deep) {
+                for (Type superType : getSupertypes(typeMirror, deep)) {
+                    entityType.addSupertype(new Supertype(superType));
+                }
+            }
+
+            return entityType;
+        } else {
+            return null;
+        }
+    }
+
+    @Nullable
+    private EntityType createNameClassEntityType(TypeMirror typeMirror, List<String> key, boolean deep) {
+        entityTypeCache.put(key, null);
+        Type value = visitor.visit(typeMirror, deep);
+        if (value != null) {
+            EntityType entityType = null;
+            if (value instanceof EntityType) {
+                entityType = (EntityType) value;
+            } else {
+                entityType = new EntityType(value, variableNameFunction);
+                typeMappings.register(entityType, createNameClassType(entityType));
             }
             entityTypeCache.put(key, entityType);
 
@@ -656,5 +674,17 @@ public class ExtendedTypeFactory {
                 }
             }
         }
+    }
+
+    public SimpleType createNameClassType(EntityType model) {
+        String simpleName = model.getSimpleName().replaceAll("\\.", "_");
+        String nameClass = "N" + simpleName;
+        String fullName = model.getPackageName() + "." + nameClass;
+
+        return new SimpleType(
+                fullName,
+                model.getPackageName(),
+                nameClass
+        );
     }
 }

@@ -68,6 +68,10 @@ public abstract class TypeMappings {
         }
     }
 
+    public Type getPathType(Type type, EntityType model, Property property, boolean raw) {
+        return getPathType(type, model, raw, false, false);
+    }
+
     public Type getPathType(Type type, EntityType model, boolean raw) {
         return getPathType(type, model, raw, false, false);
     }

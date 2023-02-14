@@ -663,7 +663,7 @@ public class DefaultEntitySerializer implements EntitySerializer {
 
     protected void customField(EntityType model, Property field, SerializerConfig config,
             CodeWriter writer) throws IOException {
-        Type queryType = typeMappings.getPathType(field.getType(), model, false);
+        Type queryType = typeMappings.getPathType(field.getType(), model, field, false);
         writer.line("// custom");
         if (field.isInherited()) {
             writer.line("// inherited");
@@ -716,7 +716,7 @@ public class DefaultEntitySerializer implements EntitySerializer {
 
             // strips of "? extends " etc
             Type propertyType = new SimpleType(property.getType(), property.getType().getParameters());
-            Type queryType = typeMappings.getPathType(propertyType, model, false);
+            Type queryType = typeMappings.getPathType(propertyType, model, property, false);
             Type genericQueryType = null;
             String localRawName = writer.getRawName(property.getType());
             String inits = getInits(property);

@@ -71,4 +71,6 @@ public enum PropertyType {
      */
     ENTITY,
 
+    CUSTOM,
+
 }

@@ -13,13 +13,12 @@
  */
 package com.querydsl.apt;
 
+import com.querydsl.codegen.EntityType;
+
+import javax.lang.model.element.TypeElement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import javax.lang.model.element.TypeElement;
-
-import com.querydsl.codegen.EntityType;
 
 /**
  * Context of handled types used by {@link AbstractQuerydslProcessor}
@@ -42,6 +41,8 @@ class Context {
     final Map<String, EntityType> extensionTypes = new HashMap<String,EntityType>();
 
     final Map<String, Set<TypeElement>> typeElements = new HashMap<String,Set<TypeElement>>();
+
+    final Map<String, EntityType> nameClasses = new HashMap<>();
 
     public void clean() {
         for (String key : supertypes.keySet()) {
